@@ -49,24 +49,37 @@ with tqdm(total=len(stock_df)) as pbar:
         code = stock_df.iloc[i, 0]
         stock_code = stock_df.iloc[i, 1]
         name = stock_df.iloc[i, 2]
+        # 재시도 횟수를 설정합니다.
+        max_retries = 3
+        retries = 0
 
-        krx_response = requests.get(f"http://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey={krx_key}&likeSrtnCd={stock_code}&numOfRows=1&resultType=json")
+        while retries < max_retries:
+            krx_response = requests.get(
+                f"http://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey={krx_key}&likeSrtnCd={stock_code}&numOfRows=1&resultType=json")
 
-        if krx_response.status_code == 200:
-            try:
-                file_key = f'{code}/totaldata/{target_year}-{cur_month}.json'
+            if krx_response.status_code == 200:
+                try:
+                    file_key = f'{code}/totaldata/{target_year}-{cur_month}.json'
 
-                data = krx_response.json()  # JSON 형식으로 응답 데이터를 파싱
-                stock_data_all = data['response']['body']['items']['item'][0]
-                selected_data = {
-                    '시가총액': stock_data_all['mrktTotAmt'],
-                    '상장주식수': stock_data_all['lstgStCnt']
-                }
-                s3.put_object(Bucket=bucket_name, Key=file_key, Body=json.dumps(selected_data))
-            except Exception as e:
-                print(f'JSON 디코딩 오류: {e}')
-        else:
-            print(f'요청 실패. 상태 코드: {krx_response.status_code}')
+                    data = krx_response.json()
+                    stock_data_all = data['response']['body']['items']['item'][0]
+                    selected_data = {
+                        '시가총액': stock_data_all['mrktTotAmt'],
+                        '상장주식수': stock_data_all['lstgStCnt']
+                    }
+                    s3.put_object(Bucket=bucket_name, Key=file_key, Body=json.dumps(selected_data))
+                    break  # 성공하면 루프 탈출
+                except Exception as e:
+                    print(f'JSON 디코딩 오류: {e}')
+            else:
+                print(f'요청 실패. 상태 코드: {krx_response.status_code}')
+                retries += 1
+                if retries < max_retries:
+                    time.sleep(3)  # 재시도 전 3초 대기
+                    continue
+                else:
+                    print(f'재시도 횟수 초과. 종료.')
+                    break
 
         time.sleep(3)
         pbar.update(1)
