@@ -67,6 +67,7 @@ with tqdm(total=len(stock_df)) as pbar:
                         '시가총액': stock_data_all['mrktTotAmt'],
                         '상장주식수': stock_data_all['lstgStCnt']
                     }
+                    print(name, selected_data)
                     s3.put_object(Bucket=bucket_name, Key=file_key, Body=json.dumps(selected_data))
                     break  # 성공하면 루프 탈출
                 except Exception as e:
