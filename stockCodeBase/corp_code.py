@@ -45,7 +45,7 @@ temp_dfs = []  # 데이터프레임을 저장할 리스트
 # db 조회 - 종목 코드로 조회
 for i in range(len(infos)):
     cur_stock_code = infos[i][1]
-    query_code = f"SELECT * FROM dartCode WHERE dartCode.stock_code = '{cur_stock_code}'" # 종목코드로 조회
+    query_code = f"SELECT * FROM dart_code WHERE dart_code.stock_code = '{cur_stock_code}'" # 종목코드로 조회
 
     result_df = pd.read_sql_query(query_code, engine)
     if result_df.empty:

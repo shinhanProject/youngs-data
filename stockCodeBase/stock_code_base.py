@@ -75,7 +75,7 @@ if connection.is_connected():
     # 데이터프레임의 데이터를 MySQL 데이터베이스 테이블에 삽입
     with tqdm(total=len(corp_df)) as pbar:
         for i, row in corp_df.iterrows():
-            insert_query = "INSERT INTO dartCode (corp_code, corp_name, stock_code, modify_date) VALUES (%s, %s, %s, %s)"
+            insert_query = "INSERT INTO dart_code (corp_code, corp_name, stock_code, modify_date) VALUES (%s, %s, %s, %s)"
             cursor.execute(insert_query, (row['corp_code'], row['corp_name'], row['stock_code'], row['modify_date']))
             pbar.update(1)
     connection.commit()
