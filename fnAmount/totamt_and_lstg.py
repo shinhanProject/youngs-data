@@ -29,7 +29,7 @@ aws_region = os.getenv("AWS_DEFAULT_REGION")
 engine = create_engine(f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:3306/{db_database}')
 
 # 상위 종목들의 코드, 이름 가져오는 쿼리
-query = "SELECT corp_code, stock_code, corp_name FROM stockCode"
+query = "SELECT corp_code, stock_code, corp_name FROM stock_corp_code"
 
 # 종목 목록
 stock_df = pd.read_sql_query(query, engine)
@@ -54,8 +54,14 @@ with tqdm(total=len(stock_df)) as pbar:
         retries = 0
 
         while retries < max_retries:
-            krx_response = requests.get(
-                f"http://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey={krx_key}&likeSrtnCd={stock_code}&numOfRows=1&resultType=json")
+            krx_response = ''
+            try:
+                krx_response = requests.get(
+                    f"http://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey={krx_key}&likeSrtnCd={stock_code}&numOfRows=1&resultType=json")
+            except Exception as e:
+                time.sleep(3)
+                krx_response = requests.get(
+                    f"http://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey={krx_key}&likeSrtnCd={stock_code}&numOfRows=1&resultType=json")
 
             if krx_response.status_code == 200:
                 try:
