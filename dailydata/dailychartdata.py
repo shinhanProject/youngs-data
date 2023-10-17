@@ -34,7 +34,7 @@ aws_region = os.getenv("AWS_DEFAULT_REGION")
 engine = create_engine(f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:3306/{db_database}')
 
 # 상위 종목들의 코드, 이름 가져오는 쿼리
-query = "SELECT corp_code, corp_name, stock_code FROM stockCode"
+query = "SELECT corp_code, corp_name, stock_code FROM stock_corp_code"
 stock_df = pd.read_sql_query(query, engine)
 
 broker = mojito.KoreaInvestment(
