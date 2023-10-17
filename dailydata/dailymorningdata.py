@@ -77,7 +77,13 @@ for j in range(len(stock_df)):
 
     # krx - 등락률
     krx_url = f"http://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey={krx_key}&likeSrtnCd={stock_code}&numOfRows=1&resultType=json"
-    krx_response = requests.get(krx_url)
+    krx_response = ''
+    try:
+        krx_response = requests.get(krx_url)
+    except Exception as e:
+        time.sleep(2)
+        krx_response = requests.get(krx_url)
+
     if krx_response.status_code == 200:
         try:
             data = krx_response.json()  # JSON 형식으로 응답 데이터를 파싱
