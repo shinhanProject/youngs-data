@@ -57,7 +57,7 @@ for i in range(len(infos)):
 # 테이블 저장
 if temp_dfs:
     stocks_df = pd.concat(temp_dfs, ignore_index=True)
-    stocks_df.to_sql(name='stockCode', con=engine, if_exists='replace', index=False)
+    stocks_df.to_sql(name='stock_corp_code', con=engine, if_exists='replace', index=False)
     print("저장 완료")
 
 # 연결 종료
