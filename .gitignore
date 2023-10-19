@@ -2,5 +2,6 @@
 venv/
 .env
 .idea
+token.dat
 stockCodeBase/CORPCODE.xml
 stockCodeBase/고유번호.zip
