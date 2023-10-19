@@ -1,3 +1,6 @@
 # created by virtualenv automatically
 venv/
 .env
+.idea
+stockCodeBase/CORPCODE.xml
+stockCodeBase/고유번호.zip
